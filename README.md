@@ -8,6 +8,8 @@
 
 _Integration to integrate with [family_safety][family_safety]._
 
+**IMPORTANT: Do not use `configuration.yaml` to configure this integration as it is not supported**
+
 **This integration will set up the following platforms.**
 
 | Platform | Description |
@@ -25,7 +27,12 @@ _Integration to integrate with [family_safety][family_safety]._
 
 ## Configuration is done in the UI
 
-<!---->
+**IMPORTANT:** Make sure you do the following steps after starting the config flow as the response token can expire very quickly
+
+1. First authorize a session by navigating to the following URL:
+   [login.live.com](https://login.live.com/oauth20_authorize.srf?cobrandid=b5d15d4b-695a-4cd5-93c6-13f551b310df&client_id=dce5010f-c52d-4353-ae86-d666373528d8&response_type=code&redirect_uri=https%3A%2F%2Flogin.live.com%2Foauth20_desktop.srf&response_mode=query&scope=service%3A%3Afamilymobile.microsoft.com%3A%3AMBI_SSL&lw=1&fl=easi2&login_hint=)
+1. Once logged in you should be taken to a blank page copy the full URL in the address bar (including `https`)
+1. Paste this token into the `OAuth response URL` field in the Home Assistant UI.
 
 ## Contributions are welcome!
 
