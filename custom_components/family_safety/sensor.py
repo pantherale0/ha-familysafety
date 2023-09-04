@@ -65,7 +65,16 @@ class AccountScreentimeSensor(ManagedAccountEntity, SensorEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        devices = {}
+        for device in self._account.devices:
+            if device.today_time_used:
+                devices[device.device_name] = (device.today_time_used/1000)/60
+            else:
+                devices[device.device_name] = 0
+        applications = {}
+        for app in self._account.applications:
+            applications[app.name] = app.usage
         return {
-            "application_usage": [],
-            "device_usage": []
+            "application_usage": applications,
+            "device_usage": devices
         }

@@ -17,7 +17,7 @@ from .const import DOMAIN
 from .coordinator import FamilySafetyCoordinator
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS = [Platform.SENSOR, Platform.SWITCH]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Setup Family Safety from a ConfigEntry."""

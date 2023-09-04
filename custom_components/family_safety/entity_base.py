@@ -2,7 +2,11 @@
 
 import logging
 
+from datetime import datetime, time, timedelta
+
 from pyfamilysafety import Account
+from pyfamilysafety.account import Device
+from pyfamilysafety.enum import OverrideTarget, OverrideType
 
 import homeassistant.helpers.device_registry as dr
 from homeassistant.helpers.entity import DeviceInfo, Entity
@@ -45,3 +49,36 @@ class ManagedAccountEntity(CoordinatorEntity, Entity):
             name=str(self._account.first_name),
             entry_type=dr.DeviceEntryType.SERVICE
         )
+
+class PlatformOverrideEntity(ManagedAccountEntity):
+    """Defines a managed device."""
+
+    def __init__(self,
+                 coordinator: FamilySafetyCoordinator,
+                 idx,
+                 account_id,
+                 platform: OverrideTarget) -> None:
+        """init entity."""
+        super().__init__(coordinator, idx, account_id, f"override_{str(platform).lower()}")
+        self._platform = platform
+
+    @property
+    def _get_override_state(self) -> bool:
+        """Gets a state if the override is active or not."""
+        for override in self._account.blocked_platforms:
+            if override == self._platform or override == OverrideTarget.ALL_DEVICES:
+                return True
+        return False
+
+    async def _enable_override(self, until: datetime = None):
+        """Enables the override."""
+        if until is None:
+            until = datetime.combine(datetime.today(),
+                                     time(hour=0, minute=0, second=0)) + timedelta(days=1)
+        await self._account.override_device(self._platform, OverrideType.UNTIL, valid_until=until)
+        await self.coordinator.async_request_refresh()
+
+    async def _disable_override(self):
+        """Disables the override."""
+        await self._account.override_device(self._platform, OverrideType.CANCEL)
+        await self.coordinator.async_request_refresh()
