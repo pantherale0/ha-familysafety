@@ -6,3 +6,8 @@ logger:
   default: info
   logs:
     custom_components.family_safety: debug
+
+# Enable VSCode debugging
+debugpy:
+  start: true
+  wait: true

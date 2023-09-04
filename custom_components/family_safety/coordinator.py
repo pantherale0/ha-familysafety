@@ -5,8 +5,6 @@ from datetime import timedelta
 
 import async_timeout
 
-from .const import NAME
-
 from homeassistant.core import HomeAssistant
 from pyfamilysafety import FamilySafety
 from homeassistant.helpers.update_coordinator import (
@@ -14,18 +12,23 @@ from homeassistant.helpers.update_coordinator import (
     UpdateFailed
 )
 
+from .const import NAME
+
 _LOGGER = logging.getLogger(__name__)
 
 class FamilySafetyCoordinator(DataUpdateCoordinator):
     """Family safety data updater."""
 
-    def __init__(self, hass: HomeAssistant, family_safety: FamilySafety) -> None:
+    def __init__(self,
+                 hass: HomeAssistant,
+                 family_safety: FamilySafety,
+                 update_interval: int=60) -> None:
         """Init the coordinator."""
         super().__init__(
             hass=hass,
             logger=_LOGGER,
             name=NAME,
-            update_interval=timedelta(seconds=60)
+            update_interval=timedelta(seconds=update_interval)
         )
         self.api: FamilySafety = family_safety
 

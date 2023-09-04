@@ -5,7 +5,8 @@
                 "description": "If you need help with the configuration have a look here: https://github.com/pantherale0/ha-familysafety",
                 "data": {
                     "refresh_token": "Refresh token",
-                    "response_url": "OAuth response URL"
+                    "response_url": "OAuth response URL",
+                    "update_interval": "Update interval"
                 }
             }
         },
