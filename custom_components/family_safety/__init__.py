@@ -24,17 +24,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     _LOGGER.debug("Got request to setup entry.")
     try:
-        familysafety = None
-        if len(entry.data["refresh_token"]) > 0:
-            familysafety = await FamilySafety.create(
-               token=entry.data["refresh_token"],
-               use_refresh_token=True
-            )
-        else:
-            familysafety = await FamilySafety.create(
-               token=entry.data["response_url"],
-               use_refresh_token=False
-            )
+        familysafety = await FamilySafety.create(
+            token=entry.data["refresh_token"],
+            use_refresh_token=True
+        )
         _LOGGER.debug("Login successful, setting up coordinator.")
         hass.data[DOMAIN][entry.entry_id] = FamilySafetyCoordinator(
             hass,

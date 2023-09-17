@@ -16,5 +16,16 @@
             "connection": "Unable to connect to the server.",
             "unknown": "Unknown error occurred."
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "description": "Update Microsoft Family Safety configuration",
+                "data": {
+                    "update_interval": "Update interval (seconds)",
+                    "refresh_token": "Refresh token"
+                }
+            }
+        }
     }
 }
