@@ -6,14 +6,16 @@
 
 [![hacs][hacsbadge]][hacs]
 
-_Integration to integrate with [family_safety][family_safety]._
+_Integration to integrate with [ha-familysafety][ha-familysafety]._
 
 **IMPORTANT: Do not use `configuration.yaml` to configure this integration as it is not supported**
 
 **This integration will set up the following platforms.**
 
-| Platform | Description |
-| -------- | ----------- |
+| Platform | Description                                                                                  |
+| -------- | -------------------------------------------------------------------------------------------- |
+| Sensor   | Screen time specified as a duration sensor measured in minutes                               |
+| Switch   | Enable / Disable overrides for specific platform access such as Xbox, Windows, Mobile or all |
 
 ## Installation
 
@@ -40,6 +42,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 
 ---
 
+[ha-familysafety]: https://github.com/pantherale0/ha-familysafety
 [commits-shield]: https://img.shields.io/github/commit-activity/y/pantherale0/ha-familysafety.svg?style=for-the-badge
 [commits]: https://github.com/pantherale0/ha-familysafety/commits/main
 [hacs]: https://github.com/hacs/integration
