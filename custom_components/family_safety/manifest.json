@@ -8,9 +8,9 @@
   "documentation": "https://github.com/pantherale0/ha-familysafety",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/pantherale0/ha-familysafety/issues",
-  "requirements": ["pyfamilysafety==0.1.0"],
+  "requirements": ["pyfamilysafety==0.1.1"],
   "ssdp": [],
   "zeroconf": [],
-  "version": "1.1.0b0",
+  "version": "1.1.0b1",
   "integration_type": "service"
 }

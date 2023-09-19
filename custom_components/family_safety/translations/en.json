@@ -19,11 +19,31 @@
     },
     "options": {
         "step": {
-            "init": {
-                "description": "Update Microsoft Family Safety configuration",
+            "applications": {
+                "description": "Create or delete application specific entities",
+                "data": {
+                    "tracked_applications": "Applications"
+                }
+            },
+            "auth": {
+                "description": "Update Microsoft Family Safety authentication",
                 "data": {
                     "update_interval": "Update interval (seconds)",
                     "refresh_token": "Refresh token"
+                }
+            },
+            "accounts": {
+                "description": "Allows you to collect all accounts (default) or optionally provide a list of accounts to pull entities for",
+                "data": {
+                    "accounts": "Accounts"
+                }
+            },
+            "init": {
+                "description": "Update Microsoft Family Safety configuration",
+                "menu_options": {
+                    "applications": "Configure application entities",
+                    "auth": "Configure authentication configuration",
+                    "accounts": "Configure collected accounts"
                 }
             }
         }

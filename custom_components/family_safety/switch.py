@@ -30,15 +30,18 @@ async def async_setup_entry(
     accounts: list[Account] = hass.data[DOMAIN][config_entry.entry_id].api.accounts
     entities = []
     for account in accounts:
-        for platform in DEFAULT_OVERRIDE_ENTITIES:
-            entities.append(
-                PlatformOverrideSwitch(
-                    coordinator=hass.data[DOMAIN][config_entry.entry_id],
-                    idx=None,
-                    account_id=account.user_id,
-                    platform=platform
+        if (account.user_id in config_entry.options.get("accounts", [])) or (
+            len(config_entry.options.get("accounts", []))==0
+        ):
+            for platform in DEFAULT_OVERRIDE_ENTITIES:
+                entities.append(
+                    PlatformOverrideSwitch(
+                        coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                        idx=None,
+                        account_id=account.user_id,
+                        platform=platform
+                    )
                 )
-            )
 
     async_add_entities(entities, True)
 
