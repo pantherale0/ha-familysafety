@@ -5,7 +5,7 @@ import logging
 from datetime import datetime, time, timedelta
 
 from pyfamilysafety import Account
-from pyfamilysafety.account import Device
+from pyfamilysafety.application import Application
 from pyfamilysafety.enum import OverrideTarget, OverrideType
 
 import homeassistant.helpers.device_registry as dr
@@ -49,6 +49,35 @@ class ManagedAccountEntity(CoordinatorEntity, Entity):
             name=str(self._account.first_name),
             entry_type=dr.DeviceEntryType.SERVICE
         )
+
+    async def async_block_application(self, name: str):
+        """Blocks a application with a given app name."""
+        await [a for a in self._account.applications if a.name == name][0].block_app()
+
+    async def async_unblock_application(self, name: str):
+        """Blocks a application with a given app name."""
+        await [a for a in self._account.applications if a.name == name][0].unblock_app()
+
+class ApplicationEntity(ManagedAccountEntity):
+    """Defines a application entity."""
+    def __init__(self,
+                 coordinator: FamilySafetyCoordinator,
+                 idx,
+                 account_id,
+                 app_id: str) -> None:
+        """init entity."""
+        super().__init__(coordinator, idx, account_id, f"override_{str(app_id).lower()}")
+        self._app_id = app_id
+
+    @property
+    def _application(self) -> Application:
+        """Gets the application."""
+        return self._account.get_application(self._app_id)
+
+    @property
+    def icon(self) -> str | None:
+        return self._application.icon
+
 
 class PlatformOverrideEntity(ManagedAccountEntity):
     """Defines a managed device."""

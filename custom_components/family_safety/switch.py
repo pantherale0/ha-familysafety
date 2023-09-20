@@ -17,7 +17,7 @@ from .const import (
     DEFAULT_OVERRIDE_ENTITIES
 )
 
-from .entity_base import PlatformOverrideEntity
+from .entity_base import PlatformOverrideEntity, ApplicationEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -43,8 +43,39 @@ async def async_setup_entry(
                         platform=platform
                     )
                 )
+            for app in config_entry.options.get("tracked_applications", []):
+                entities.append(
+                    ApplicationBlockSwitch(
+                        coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                        idx=None,
+                        account_id=account.user_id,
+                        app_id=app
+                    )
+                )
 
     async_add_entities(entities, True)
+
+class ApplicationBlockSwitch(ApplicationEntity, SwitchEntity):
+    """Defines a application switch."""
+    @property
+    def name(self) -> str:
+        return f"Block {self._application.name}"
+
+    @property
+    def is_on(self) -> bool:
+        return self._application.blocked
+
+    @property
+    def device_class(self) -> SwitchDeviceClass | None:
+        return SwitchDeviceClass.SWITCH
+
+    async def async_turn_off(self, **kwargs: Any) -> None:
+        await self._application.unblock_app()
+        await self.coordinator.async_request_refresh()
+
+    async def async_turn_on(self, **kwargs: Any) -> None:
+        await self._application.block_app()
+        await self.coordinator.async_request_refresh()
 
 class PlatformOverrideSwitch(PlatformOverrideEntity, SwitchEntity):
     """Platform override switch."""

@@ -4,12 +4,14 @@ from collections.abc import Mapping
 import logging
 from typing import Any
 
+import voluptuous as vol
+
 from pyfamilysafety import Account
 
 from homeassistant.components.sensor import SensorEntity, SensorDeviceClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback, async_get_current_platform
 
 from .coordinator import FamilySafetyCoordinator
 
@@ -17,7 +19,7 @@ from .const import (
     DOMAIN
 )
 
-from .entity_base import ManagedAccountEntity
+from .entity_base import ManagedAccountEntity, ApplicationEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,6 +42,13 @@ async def async_setup_entry(
                     account_id=account.user_id
                 )
             )
+            entities.append(
+                AccountBalanceSensor(
+                    coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                    idx=None,
+                    account_id=account.user_id
+                )
+            )
             for app in config_entry.options.get("tracked_applications", []):
                 entities.append(
                     ApplicationScreentimeSensor(
@@ -51,6 +60,44 @@ async def async_setup_entry(
                 )
 
     async_add_entities(entities, True)
+    # register services
+    platform = async_get_current_platform()
+    platform.async_register_entity_service(
+        name="block_app",
+        schema={
+            vol.Required("name"): str
+        },
+        func="async_block_application"
+    )
+    platform.async_register_entity_service(
+        name="unblock_app",
+        schema={
+            vol.Required("name"): str
+        },
+        func="async_unblock_application"
+    )
+
+class AccountBalanceSensor(ManagedAccountEntity, SensorEntity):
+    """A balance sensor for the account."""
+    def __init__(self, coordinator: FamilySafetyCoordinator, idx, account_id) -> None:
+        super().__init__(coordinator, idx, account_id, "balance")
+
+    @property
+    def name(self) -> str:
+        return "Available Balance"
+
+    @property
+    def native_value(self) -> float:
+        """Return balance"""
+        return self._account.account_balance
+
+    @property
+    def native_unit_of_measurement(self) -> str | None:
+        return self._account.account_currency
+
+    @property
+    def device_class(self) -> SensorDeviceClass | None:
+        return SensorDeviceClass.MONETARY
 
 class AccountScreentimeSensor(ManagedAccountEntity, SensorEntity):
     """Aggregate screentime sensor."""
@@ -91,25 +138,11 @@ class AccountScreentimeSensor(ManagedAccountEntity, SensorEntity):
             "device_usage": devices
         }
 
-class ApplicationScreentimeSensor(ManagedAccountEntity, SensorEntity):
+class ApplicationScreentimeSensor(ApplicationEntity, SensorEntity):
     """Application specific screentime sensor"""
-
-    def __init__(self,
-                 coordinator: FamilySafetyCoordinator,
-                 idx,
-                 account_id,
-                 app_id) -> None:
-        super().__init__(coordinator, idx, account_id, f"{app_id}_screentime")
-        self._app_id = app_id
-
     @property
     def name(self) -> str:
         return f"{self._application.name} Used Screen Time"
-
-    @property
-    def _application(self):
-        """Return the application."""
-        return self._account.get_application(self._app_id)
 
     @property
     def native_value(self) -> float:
@@ -123,10 +156,6 @@ class ApplicationScreentimeSensor(ManagedAccountEntity, SensorEntity):
     @property
     def device_class(self) -> SensorDeviceClass | None:
         return SensorDeviceClass.DURATION
-
-    @property
-    def icon(self) -> str | None:
-        return self._application.icon
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:

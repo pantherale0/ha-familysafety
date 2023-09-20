@@ -1,0 +1,20 @@
+block_app:
+  target:
+    entity:
+      integration: family_safety
+  fields:
+    name:
+      required: True
+      selector:
+        text:
+          multiline: False
+unblock_app:
+  target:
+    entity:
+      integration: family_safety
+  fields:
+    name:
+      required: True
+      selector:
+        text:
+          multiline: False

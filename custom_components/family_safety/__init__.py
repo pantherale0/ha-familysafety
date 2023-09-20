@@ -3,7 +3,7 @@
 import logging
 
 from pyfamilysafety import FamilySafety
-from pyfamilysafety.exceptions import HttpException
+from pyfamilysafety.exceptions import HttpException, Unauthorized, AggregatorException
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -13,7 +13,7 @@ from homeassistant.exceptions import (
     HomeAssistantError
 )
 
-from .const import DOMAIN
+from .const import DOMAIN, AGG_ERROR
 from .coordinator import FamilySafetyCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -34,9 +34,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             familysafety,
             entry.options.get("update_interval", entry.data["update_interval"]))
         # no need to fetch initial data as this is already handled on creation
+    except AggregatorException as err:
+        _LOGGER.error(AGG_ERROR)
+        raise CannotConnect from err
+    except Unauthorized as err:
+        raise ConfigEntryAuthFailed from err
     except HttpException as err:
         _LOGGER.error(err)
-        raise ConfigEntryAuthFailed from err
+        raise CannotConnect from err
     except Exception as err:
         _LOGGER.error(err)
         raise CannotConnect from err
