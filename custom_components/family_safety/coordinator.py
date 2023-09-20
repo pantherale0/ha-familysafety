@@ -38,4 +38,4 @@ class FamilySafetyCoordinator(DataUpdateCoordinator):
             async with async_timeout.timeout(50):
                 return await self.api.update()
         except Exception as err:
-            raise UpdateFailed from err
+            raise UpdateFailed(f"Error communicating with API {err}") from err
