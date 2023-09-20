@@ -195,9 +195,7 @@ class OptionsFlow(config_entries.OptionsFlow):
             )
 
         default_tracked_applications = []
-        tracked_applications = self.config_entry.data.get("tracked_applications", [])
-        if self.config_entry.options:
-            tracked_applications = self.config_entry.options.get("tracked_applications", [])
+        tracked_applications = self._get_config_entry("tracked_applications")
         if tracked_applications is None:
             tracked_applications = []
         for app in tracked_applications:
@@ -240,11 +238,9 @@ class OptionsFlow(config_entries.OptionsFlow):
             )
 
         default_tracked_accounts = []
-        tracked_accounts = self.config_entry.data.get("accounts", [])
+        tracked_accounts = self._get_config_entry("accounts")
         if tracked_accounts is None:
             tracked_accounts = []
-        if self.config_entry.options:
-            tracked_accounts = self.config_entry.options.get("accounts", [])
         for account in tracked_accounts:
             try:
                 acc = self.family_safety.get_account(account)
