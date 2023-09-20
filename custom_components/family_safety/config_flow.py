@@ -122,10 +122,12 @@ class OptionsFlow(config_entries.OptionsFlow):
         update_interval = self._get_config_entry("update_interval")
         if kwargs.get("update_interval", None) is not None:
             update_interval = kwargs.get("update_interval")
+        if update_interval is None:
+            update_interval = 60
 
         refresh_token = self._get_config_entry("refresh_token")
         if kwargs.get("refresh_token", None) is not None:
-            update_interval = kwargs.get("refresh_token")
+            refresh_token = kwargs.get("refresh_token")
 
         tracked_applications = self._get_config_entry("tracked_applications")
         if kwargs.get("tracked_applications", None) is not None:
@@ -162,7 +164,7 @@ class OptionsFlow(config_entries.OptionsFlow):
 
         update_interval = self.config_entry.data["update_interval"]
         if self.config_entry.options:
-            update_interval = self.config_entry.options.get("update_interval")
+            update_interval = self.config_entry.options.get("update_interval", update_interval)
 
         return self.async_show_form(
             step_id="auth",
@@ -180,12 +182,12 @@ class OptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.FlowResult:
         """Application configuration step."""
         if user_input is not None:
-            tracked_application_ids = []
+            tracked_applications = []
             applications = self.family_safety.accounts[0].applications
             for app in user_input.get("tracked_applications", []):
-                tracked_application_ids.append(_get_application_id(app, applications))
+                tracked_applications.append(_get_application_id(app, applications))
             return await self._async_create_entry(
-                tracked_application_ids=tracked_application_ids
+                tracked_applications=tracked_applications
             )
 
         default_tracked_applications = []

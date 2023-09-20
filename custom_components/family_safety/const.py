@@ -6,7 +6,7 @@ LOGGER: Logger = getLogger(__package__)
 
 NAME = "Microsoft Family Safety"
 DOMAIN = "family_safety"
-VERSION = "1.1.0b2"
+VERSION = "1.1.0b3"
 
 DEFAULT_OVERRIDE_ENTITIES = [OverrideTarget.MOBILE,
                              OverrideTarget.WINDOWS,
