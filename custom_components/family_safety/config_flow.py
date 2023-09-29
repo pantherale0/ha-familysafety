@@ -226,13 +226,11 @@ class OptionsFlow(config_entries.OptionsFlow):
 
         if user_input is not None:
             tracked_user_ids = []
-            try:
+            with contextlib.suppress(IndexError):
                 for user in user_input.get("accounts", []):
                     tracked_user_ids.append(
                         _get_account_id(user, self.family_safety.accounts)
                     )
-            except IndexError:
-                pass
             return await self._async_create_entry(
                 accounts=tracked_user_ids
             )
@@ -242,11 +240,9 @@ class OptionsFlow(config_entries.OptionsFlow):
         if tracked_accounts is None:
             tracked_accounts = []
         for account in tracked_accounts:
-            try:
+            with contextlib.suppress(IndexError):
                 acc = self.family_safety.get_account(account)
                 default_tracked_accounts.append(f"{acc.first_name} {acc.surname}")
-            except IndexError:
-                pass
 
         return self.async_show_form(
             step_id="accounts",
