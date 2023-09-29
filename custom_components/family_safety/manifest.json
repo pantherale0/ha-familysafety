@@ -11,6 +11,6 @@
   "issue_tracker": "https://github.com/pantherale0/ha-familysafety/issues",
   "requirements": ["pyfamilysafety==0.2.0"],
   "ssdp": [],
-  "version": "1.1.0b5",
+  "version": "1.1.0b6",
   "zeroconf": []
 }
