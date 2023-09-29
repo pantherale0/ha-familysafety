@@ -91,6 +91,7 @@ class PlatformOverrideSwitch(PlatformOverrideEntity, SwitchEntity):
                  idx,
                  account_id,
                  platform) -> None:
+        """Create PlatformOverrideSwitch."""
         super().__init__(coordinator, idx, account_id, platform)
 
     @property

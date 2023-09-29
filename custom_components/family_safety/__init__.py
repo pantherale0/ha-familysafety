@@ -20,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR, Platform.SWITCH]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Setup from ConfigEntry."""
+    """Create ConfigEntry."""
     hass.data.setdefault(DOMAIN, {})
     _LOGGER.debug("Got request to setup entry.")
     try:

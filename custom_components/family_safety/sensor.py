@@ -149,7 +149,7 @@ class AccountScreentimeSensor(ManagedAccountEntity, SensorEntity):
         }
 
 class ApplicationScreentimeSensor(ApplicationEntity, SensorEntity):
-    """Application specific screentime sensor"""
+    """Application specific screentime sensor."""
 
     @property
     def name(self) -> str:

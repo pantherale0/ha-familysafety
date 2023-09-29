@@ -33,7 +33,7 @@ def _get_application_id(name: str, applications: list[Application]):
     return [a for a in applications if a.name == name][0].app_id
 
 def _convert_applications(applications: list[Application]):
-    """Converts a list of applications to an array for options."""
+    """Convert a list of applications to an array for options."""
     return [a.name for a in applications]
 
 def _convert_accounts(accounts: list[Account]):
@@ -111,7 +111,7 @@ class OptionsFlow(config_entries.OptionsFlow):
         self.family_safety: FamilySafety = None
 
     def _get_config_entry(self, key):
-        """Returns the specific config entry"""
+        """Return the specific config entry."""
         config = self.config_entry.data.get(key, None)
         if (self.config_entry.options) and (
             self.config_entry.options.get(key, None) is not None
