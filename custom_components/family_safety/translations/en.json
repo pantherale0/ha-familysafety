@@ -47,5 +47,23 @@
                 }
             }
         }
+    },
+    "services": {
+        "block_app": {
+            "name": "Block Application",
+            "description": "Block an application from running for the given Microsoft account.",
+            "fields": {
+                "name": "Application name",
+                "description": "The name of the application to block (you can find this in the screen time sensor)."
+            }
+        },
+        "unblock_app": {
+            "name": "Unblock Application",
+            "description": "Allow an application to run for the given Microsoft account.",
+            "fields": {
+                "name": "Application name",
+                "description": "The name of the application to unblock (you can find this in the screen time sensor)."
+            }
+        }
     }
 }
