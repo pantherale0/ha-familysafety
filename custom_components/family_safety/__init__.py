@@ -20,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR, Platform.SWITCH]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Setup Family Safety from a ConfigEntry."""
+    """Setup from ConfigEntry."""
     hass.data.setdefault(DOMAIN, {})
     _LOGGER.debug("Got request to setup entry.")
     try:
@@ -47,7 +47,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         raise CannotConnect from err
 
     async def update_listener(hass: HomeAssistant, entry: ConfigEntry):
-        """Update listener"""
+        """Update listener."""
         await hass.config_entries.async_reload(entry.entry_id)
 
     entry.async_on_unload(entry.add_update_listener(update_listener))

@@ -79,51 +79,61 @@ async def async_setup_entry(
 
 class AccountBalanceSensor(ManagedAccountEntity, SensorEntity):
     """A balance sensor for the account."""
+
     def __init__(self, coordinator: FamilySafetyCoordinator, idx, account_id) -> None:
+        """Account Balance Sensor."""
         super().__init__(coordinator, idx, account_id, "balance")
 
     @property
     def name(self) -> str:
+        """Return name of entity."""
         return "Available Balance"
 
     @property
     def native_value(self) -> float:
-        """Return balance"""
+        """Return balance."""
         return self._account.account_balance
 
     @property
     def native_unit_of_measurement(self) -> str | None:
+        """Return unit of measurement."""
         return self._account.account_currency
 
     @property
     def device_class(self) -> SensorDeviceClass | None:
+        """Return device class."""
         return SensorDeviceClass.MONETARY
 
 class AccountScreentimeSensor(ManagedAccountEntity, SensorEntity):
     """Aggregate screentime sensor."""
 
     def __init__(self, coordinator: FamilySafetyCoordinator, idx, account_id) -> None:
+        """Screentime Sensor."""
         super().__init__(coordinator, idx, account_id, "screentime")
 
     @property
     def name(self) -> str:
+        """Return entity name."""
         return "Used Screen Time"
 
     @property
     def native_value(self) -> float:
-        """Return duration (minutes)"""
+        """Return duration (minutes)."""
         return (self._account.today_screentime_usage/1000)/60
 
     @property
     def native_unit_of_measurement(self) -> str | None:
+        """Return unit of measurement."""
         return "min"
 
     @property
     def device_class(self) -> SensorDeviceClass | None:
+        """Return device class."""
         return SensorDeviceClass.DURATION
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        """Return additional state attributes."""
         devices = {}
         for device in self._account.devices:
             if device.today_time_used:
@@ -140,25 +150,30 @@ class AccountScreentimeSensor(ManagedAccountEntity, SensorEntity):
 
 class ApplicationScreentimeSensor(ApplicationEntity, SensorEntity):
     """Application specific screentime sensor"""
+
     @property
     def name(self) -> str:
+        """Return entity name."""
         return f"{self._application.name} Used Screen Time"
 
     @property
     def native_value(self) -> float:
-        """Return duration (minutes)"""
+        """Return duration (minutes)."""
         return self._application.usage
 
     @property
     def native_unit_of_measurement(self) -> str | None:
+        """Return native unit of measurement."""
         return "min"
 
     @property
     def device_class(self) -> SensorDeviceClass | None:
+        """Return device class."""
         return SensorDeviceClass.DURATION
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        """Return additional state attributes."""
         return {
             "blocked": self._application.blocked
         }

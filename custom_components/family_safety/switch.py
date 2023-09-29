@@ -56,24 +56,30 @@ async def async_setup_entry(
     async_add_entities(entities, True)
 
 class ApplicationBlockSwitch(ApplicationEntity, SwitchEntity):
-    """Defines a application switch."""
+    """Define application switch."""
+
     @property
     def name(self) -> str:
+        """Return entity name."""
         return f"Block {self._application.name}"
 
     @property
     def is_on(self) -> bool:
+        """Return entity state."""
         return self._application.blocked
 
     @property
     def device_class(self) -> SwitchDeviceClass | None:
+        """Return device class."""
         return SwitchDeviceClass.SWITCH
 
     async def async_turn_off(self, **kwargs: Any) -> None:
+        """Turn off entity."""
         await self._application.unblock_app()
         await self.coordinator.async_request_refresh()
 
     async def async_turn_on(self, **kwargs: Any) -> None:
+        """Turn on entity."""
         await self._application.block_app()
         await self.coordinator.async_request_refresh()
 
@@ -89,18 +95,23 @@ class PlatformOverrideSwitch(PlatformOverrideEntity, SwitchEntity):
 
     @property
     def name(self) -> str:
+        """Return entity name."""
         return f"Block {str(self._platform)}"
 
     @property
     def is_on(self) -> bool:
+        """Return entity state."""
         return self._get_override_state
 
     @property
     def device_class(self) -> SwitchDeviceClass | None:
+        """Return device class."""
         return SwitchDeviceClass.SWITCH
 
     async def async_turn_on(self, **kwargs: Any) -> None:
+        """Turn on entity."""
         return await self._enable_override()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
+        """Turn off entity."""
         return await self._disable_override()

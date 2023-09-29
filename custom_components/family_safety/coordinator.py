@@ -1,4 +1,4 @@
-"""Family Safety data hub"""
+"""Family Safety data hub."""
 
 import logging
 from datetime import timedelta

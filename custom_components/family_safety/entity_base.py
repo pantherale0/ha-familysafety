@@ -25,6 +25,7 @@ class ManagedAccountEntity(CoordinatorEntity, Entity):
                  idx,
                  account_id,
                  entity_id) -> None:
+        """Create a ManagedAccountEntity."""
         super().__init__(coordinator, idx)
         self._account_id = account_id
         self._entity_id = entity_id
@@ -32,12 +33,12 @@ class ManagedAccountEntity(CoordinatorEntity, Entity):
 
     @property
     def _account(self) -> Account:
-        """Returns the managed account"""
+        """Return the managed account."""
         return self.coordinator.api.get_account(self._account_id)
 
     @property
     def unique_id(self) -> str:
-        """Returns a unique ID for the entity."""
+        """Return a unique ID for the entity."""
         return f"familysafety_{self._account_id}_{self._entity_id}"
 
     @property
@@ -59,23 +60,25 @@ class ManagedAccountEntity(CoordinatorEntity, Entity):
         await [a for a in self._account.applications if a.name == name][0].unblock_app()
 
 class ApplicationEntity(ManagedAccountEntity):
-    """Defines a application entity."""
+    """Define a application entity."""
+
     def __init__(self,
                  coordinator: FamilySafetyCoordinator,
                  idx,
                  account_id,
                  app_id: str) -> None:
-        """init entity."""
+        """Create a application entity."""
         super().__init__(coordinator, idx, account_id, f"override_{str(app_id).lower()}")
         self._app_id = app_id
 
     @property
     def _application(self) -> Application:
-        """Gets the application."""
+        """Get the application."""
         return self._account.get_application(self._app_id)
 
     @property
     def icon(self) -> str | None:
+        """Get the application icon."""
         return self._application.icon
 
 
@@ -87,20 +90,20 @@ class PlatformOverrideEntity(ManagedAccountEntity):
                  idx,
                  account_id,
                  platform: OverrideTarget) -> None:
-        """init entity."""
+        """Create a PlatformOverride entity."""
         super().__init__(coordinator, idx, account_id, f"override_{str(platform).lower()}")
         self._platform = platform
 
     @property
     def _get_override_state(self) -> bool:
-        """Gets a state if the override is active or not."""
+        """Get the current state if the override is active or not."""
         for override in self._account.blocked_platforms:
             if override == self._platform or override == OverrideTarget.ALL_DEVICES:
                 return True
         return False
 
     async def _enable_override(self, until: datetime = None):
-        """Enables the override."""
+        """Enable the override."""
         if until is None:
             until = datetime.combine(datetime.today(),
                                      time(hour=0, minute=0, second=0)) + timedelta(days=1)
@@ -108,6 +111,6 @@ class PlatformOverrideEntity(ManagedAccountEntity):
         await self.coordinator.async_request_refresh()
 
     async def _disable_override(self):
-        """Disables the override."""
+        """Disable the override."""
         await self._account.override_device(self._platform, OverrideType.CANCEL)
         await self.coordinator.async_request_refresh()

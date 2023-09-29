@@ -1,5 +1,6 @@
 """Config flow for MSFT Family Safety."""
 
+import contextlib
 import logging
 from typing import Any
 
@@ -28,19 +29,19 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 def _get_application_id(name: str, applications: list[Application]):
-    """Returns the single application ID."""
+    """Return the single application ID."""
     return [a for a in applications if a.name == name][0].app_id
 
 def _convert_applications(applications: list[Application]):
     """Converts a list of applications to an array for options."""
-    return list([a.name for a in applications])
+    return [a.name for a in applications]
 
 def _convert_accounts(accounts: list[Account]):
-    """Converts a list of accounts to an array for options."""
-    return list([f"{a.first_name} {a.surname}" for a in accounts])
+    """Convert a list of accounts to an array for options."""
+    return [f"{a.first_name} {a.surname}" for a in accounts]
 
 def _get_account_id(name: str, accounts: list[Account]):
-    """Returns the account ID."""
+    """Return the account ID."""
     return [a for a in accounts if (f"{a.first_name} {a.surname}" == name)][0].user_id
 
 async def validate_input(data: dict[str, Any]) -> dict[str, Any]:
@@ -103,13 +104,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 class OptionsFlow(config_entries.OptionsFlow):
     """An options flow for HASS."""
+
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""
         self.config_entry = config_entry
         self.family_safety: FamilySafety = None
 
     def _get_config_entry(self, key):
-        """Returns the specific config entry."""
+        """Returns the specific config entry"""
         config = self.config_entry.data.get(key, None)
         if (self.config_entry.options) and (
             self.config_entry.options.get(key, None) is not None
@@ -118,7 +120,7 @@ class OptionsFlow(config_entries.OptionsFlow):
         return config
 
     async def _async_create_entry(self, **kwargs) -> config_entries.FlowResult:
-        """Creates an entry using optional overrides"""
+        """Create an entry using optional overrides."""
         update_interval = self._get_config_entry("update_interval")
         if kwargs.get("update_interval", None) is not None:
             update_interval = kwargs.get("update_interval")
@@ -199,12 +201,10 @@ class OptionsFlow(config_entries.OptionsFlow):
         if tracked_applications is None:
             tracked_applications = []
         for app in tracked_applications:
-            try:
+            with contextlib.suppress(IndexError):
                 default_tracked_applications.append(
                     self.family_safety.accounts[0].get_application(app).name
                 )
-            except IndexError:
-                pass
 
         return self.async_show_form(
             step_id="applications",
@@ -267,7 +267,7 @@ class OptionsFlow(config_entries.OptionsFlow):
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.FlowResult:
-        """Initial step."""
+        """First step."""
         self.family_safety = await FamilySafety.create(
             token=self.config_entry.data["refresh_token"],
             use_refresh_token=True
