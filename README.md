@@ -12,10 +12,24 @@ _Integration to integrate with [ha-familysafety][ha-familysafety]._
 
 **This integration will set up the following platforms.**
 
-| Platform | Description                                                                                  |
-| -------- | -------------------------------------------------------------------------------------------- |
-| Sensor   | Screen time specified as a duration sensor measured in minutes                               |
-| Switch   | Enable / Disable overrides for specific platform access such as Xbox, Windows, Mobile or all |
+| Platform | Description                                                                                            |
+| -------- | ------------------------------------------------------------------------------------------------------ |
+| Sensor   | Screen time specified as a duration sensor measured in minutes for overall account and/or applications |
+| Switch   | Block access to platforms or applications (if configured)                                              |
+
+**This integration will register the following services.**
+
+| Service     | Description                                 |
+| ----------- | ------------------------------------------- |
+| Block App   | Blocks a specified application from running |
+| Unblock App | Allow a specified application to run        |
+
+## Service Help
+
+1. The target entity that you use should be the used screen time sensor that is registered for the account you wish to block an application for.
+1. Application names must be exactly as seen in the extra state attributes for the used screen time sensor, for example:
+   - For "LEGO® CITY UNDERCOVER: 0"
+   - Use "LEGO® CITY UNDERCOVER" (without quotes)
 
 ## Installation
 
@@ -27,14 +41,26 @@ _Integration to integrate with [ha-familysafety][ha-familysafety]._
 1. Restart Home Assistant
 1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Microsoft Family Safety"
 
-## Configuration is done in the UI
-
 **IMPORTANT:** Make sure you do the following steps after starting the config flow as the response token can expire very quickly
 
 1. First authorize a session by navigating to the following URL:
    [login.live.com](https://login.live.com/oauth20_authorize.srf?cobrandid=b5d15d4b-695a-4cd5-93c6-13f551b310df&client_id=dce5010f-c52d-4353-ae86-d666373528d8&response_type=code&redirect_uri=https%3A%2F%2Flogin.live.com%2Foauth20_desktop.srf&response_mode=query&scope=service%3A%3Afamilymobile.microsoft.com%3A%3AMBI_SSL&lw=1&fl=easi2&login_hint=)
 1. Once logged in you should be taken to a blank page copy the full URL in the address bar (including `https`)
 1. Paste the copied URL into the `OAuth response URL` field in the Home Assistant UI.
+
+## Configuration is done in the UI
+
+From the configuration menu:
+
+- Additional entities can be configured to create switches to unlblock or block specific applications and also register screen time sensors
+
+  1.  Select "Configure application entities"
+  1.  Select required applications from list and press "Submit"
+
+- You can control what accounts are collected
+  1.  Select "Configure collected accounts"
+  1.  A list of available accounts to control will appear, check the box next to the name of the account you would like entities for.
+      **NOTE:** By default no options are selected and therefore all accounts will be collected
 
 ## Contributions are welcome!
 
