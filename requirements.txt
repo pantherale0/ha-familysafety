@@ -1,5 +1,5 @@
 colorlog==6.8.0
 homeassistant==2023.2.0
 pip>=21.0,<23.4
-ruff==0.1.9
+ruff==0.1.11
 pyfamilysafety==0.2.0
