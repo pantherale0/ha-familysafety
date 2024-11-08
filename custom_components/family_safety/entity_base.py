@@ -112,9 +112,7 @@ class PlatformOverrideEntity(ManagedAccountEntity):
             until = datetime.combine(datetime.today(),
                                      time(hour=0, minute=0, second=0)) + timedelta(days=1)
         await self._account.override_device(self._platform, OverrideType.UNTIL, valid_until=until)
-        await self.coordinator.async_request_refresh()
 
     async def _disable_override(self):
         """Disable the override."""
         await self._account.override_device(self._platform, OverrideType.CANCEL)
-        await self.coordinator.async_request_refresh()
