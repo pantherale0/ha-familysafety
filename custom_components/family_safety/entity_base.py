@@ -40,7 +40,7 @@ class ManagedAccountEntity(CoordinatorEntity, Entity):
     @property
     def unique_id(self) -> str:
         """Return a unique ID for the entity."""
-        return f"familysafety_{self._account_id}_{self._entity_id}"
+        return f"{self._account_id}_{self._entity_id}"
 
     @property
     def device_info(self):
