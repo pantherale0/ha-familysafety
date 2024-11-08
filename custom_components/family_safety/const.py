@@ -10,8 +10,7 @@ DOMAIN = "family_safety"
 DEFAULT_OVERRIDE_ENTITIES = [
     OverrideTarget.MOBILE,
     OverrideTarget.WINDOWS,
-    OverrideTarget.XBOX,
-    OverrideTarget.ALL_DEVICES,
+    OverrideTarget.XBOX
 ]
 AGG_TITLE = "Aggregator error occured. "
 AGG_HELP = "This is an upstream issue with Microsoft and is usually temporary. "
