@@ -76,12 +76,12 @@ class ApplicationBlockSwitch(ApplicationEntity, SwitchEntity):
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn off entity."""
         await self._application.unblock_app()
-        await self.coordinator.async_request_refresh()
+        self.schedule_update_ha_state()
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn on entity."""
         await self._application.block_app()
-        await self.coordinator.async_request_refresh()
+        self.schedule_update_ha_state()
 
 
 class PlatformOverrideSwitch(PlatformOverrideEntity, SwitchEntity):
@@ -110,8 +110,10 @@ class PlatformOverrideSwitch(PlatformOverrideEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn on entity."""
-        return await self._enable_override()
+        await self._enable_override()
+        self.schedule_update_ha_state()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn off entity."""
-        return await self._disable_override()
+        await self._disable_override()
+        self.schedule_update_ha_state()
