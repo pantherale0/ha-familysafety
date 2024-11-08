@@ -2,7 +2,7 @@
     "name": "Microsoft Family Safety",
     "filename": "family_safety.zip",
     "hide_default_branch": true,
-    "homeassistant": "2023.3.0",
+    "homeassistant": "2024.11.0",
     "render_readme": true,
     "zip_release": true
 }
