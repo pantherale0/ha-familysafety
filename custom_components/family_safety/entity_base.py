@@ -73,6 +73,7 @@ class ManagedAccountEntity(CoordinatorEntity, Entity):
                 translation_domain=DOMAIN,
                 translation_key="invalid_request_id"
             )
+        self.schedule_update_ha_state()
 
     async def async_deny_request(self, request_id: str):
         """Deny a pending request."""
@@ -83,6 +84,7 @@ class ManagedAccountEntity(CoordinatorEntity, Entity):
                 translation_domain=DOMAIN,
                 translation_key="invalid_request_id"
             )
+        self.schedule_update_ha_state()
 
 
 class ApplicationEntity(ManagedAccountEntity):

@@ -15,7 +15,8 @@ _Integration to integrate with [ha-familysafety][ha-familysafety]._
 | Platform | Description                                                                                            |
 | -------- | ------------------------------------------------------------------------------------------------------ |
 | Sensor   | Screen time specified as a duration sensor measured in minutes for overall account and/or applications |
-| Switch   | Block access to platforms or applications (if configured)                                              |
+| Sensor | Number of pending requests for a given account |
+| Switch   | Block access to platforms |
 
 **This integration will register the following services.**
 
@@ -23,6 +24,8 @@ _Integration to integrate with [ha-familysafety][ha-familysafety]._
 | ----------- | ------------------------------------------- |
 | Block App   | Blocks a specified application from running |
 | Unblock App | Allow a specified application to run        |
+| Approve Request* | Approves a pending request |
+| Deny Request* | Denies a pending request |
 
 ## Service Help
 
@@ -30,6 +33,12 @@ _Integration to integrate with [ha-familysafety][ha-familysafety]._
 1. Application names must be exactly as seen in the extra state attributes for the used screen time sensor, for example:
    - For "LEGO® CITY UNDERCOVER: 0"
    - Use "LEGO® CITY UNDERCOVER" (without quotes)
+
+### Pending Requests
+
+As of 2024.12.0b0, support for pending requests has been added. Each time pending requests are retrieved (so everytime a request is approved/denied or on each update interval) this GUID of the specific request will change, therefore if used in automations, you should retrieve the GUID for use in the service calls by filtering the `requests` attribute found under the `Pending Requests` sensor.
+
+If you would like to try, enable experimental features in the options flow (after initial configuration). This is found in the `Configure collected accounts` menu.
 
 ## Installation
 
