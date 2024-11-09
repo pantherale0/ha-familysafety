@@ -17,7 +17,7 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 
-from .const import DOMAIN
+from .const import DOMAIN, CONF_EXPR_DEFAULT, CONF_KEY_EXPR
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,21 +28,26 @@ CONFIG_SCHEMA = vol.Schema(
     }
 )
 
+
 def _get_application_id(name: str, applications: list[Application]):
     """Return the single application ID."""
     return [a for a in applications if a.name == name][0].app_id
+
 
 def _convert_applications(applications: list[Application]):
     """Convert a list of applications to an array for options."""
     return [a.name for a in applications]
 
+
 def _convert_accounts(accounts: list[Account]):
     """Convert a list of accounts to an array for options."""
     return [f"{a.first_name} {a.surname}" for a in accounts]
 
+
 def _get_account_id(name: str, accounts: list[Account]):
     """Return the account ID."""
     return [a for a in accounts if (f"{a.first_name} {a.surname}" == name)][0].user_id
+
 
 async def validate_input(data: dict[str, Any]) -> dict[str, Any]:
     """Validate the input."""
@@ -60,11 +65,13 @@ async def validate_input(data: dict[str, Any]) -> dict[str, Any]:
         _LOGGER.error(err)
         raise CannotConnect from err
 
-    _LOGGER.debug("Authentication success, expiry time %s, returning refresh_token.", auth.expires)
+    _LOGGER.debug(
+        "Authentication success, expiry time %s, returning refresh_token.", auth.expires)
     return {
         "title": "Microsoft Family Safety",
         "refresh_token": auth.refresh_token
     }
+
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow."""
@@ -102,13 +109,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors
         )
 
-class OptionsFlow(config_entries.OptionsFlow):
+
+class OptionsFlow(config_entries.OptionsFlowWithConfigEntry):
     """An options flow for HASS."""
 
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.config_entry = config_entry
-        self.family_safety: FamilySafety = None
+    family_safety: FamilySafety = None
 
     def _get_config_entry(self, key):
         """Return the specific config entry."""
@@ -119,7 +124,7 @@ class OptionsFlow(config_entries.OptionsFlow):
             config = self.config_entry.options.get(key)
         return config
 
-    async def _async_create_entry(self, **kwargs) -> config_entries.FlowResult:
+    async def async_create_entry(self, **kwargs) -> config_entries.FlowResult:
         """Create an entry using optional overrides."""
         update_interval = self._get_config_entry("update_interval")
         if kwargs.get("update_interval", None) is not None:
@@ -143,15 +148,23 @@ class OptionsFlow(config_entries.OptionsFlow):
         if accounts is None:
             accounts = []
 
+        expr = self._get_config_entry(CONF_KEY_EXPR)
+        if kwargs.get(CONF_KEY_EXPR, None) is not None:
+            expr = kwargs[CONF_KEY_EXPR]
+        if expr is None:
+            expr = CONF_EXPR_DEFAULT
+
         await self.family_safety.api.end_session()
-        return self.async_create_entry(
+        self.options.update({
+            "refresh_token": refresh_token,
+            "update_interval": update_interval,
+            "tracked_applications": tracked_applications,
+            "accounts": accounts,
+            CONF_KEY_EXPR: expr
+        })
+        return super().async_create_entry(
             title=self.config_entry.title,
-            data={
-                "refresh_token": refresh_token,
-                "update_interval": update_interval,
-                "tracked_applications": tracked_applications,
-                "accounts": accounts
-            }
+            data=self.options
         )
 
     async def async_step_auth(
@@ -166,11 +179,13 @@ class OptionsFlow(config_entries.OptionsFlow):
 
         refresh_token = self.config_entry.data["refresh_token"]
         if self.config_entry.options:
-            refresh_token = self.config_entry.options.get("refresh_token", refresh_token)
+            refresh_token = self.config_entry.options.get(
+                "refresh_token", refresh_token)
 
         update_interval = self.config_entry.data["update_interval"]
         if self.config_entry.options:
-            update_interval = self.config_entry.options.get("update_interval", update_interval)
+            update_interval = self.config_entry.options.get(
+                "update_interval", update_interval)
 
         return self.async_show_form(
             step_id="auth",
@@ -191,8 +206,9 @@ class OptionsFlow(config_entries.OptionsFlow):
             tracked_applications = []
             applications = self.family_safety.accounts[0].applications
             for app in user_input.get("tracked_applications", []):
-                tracked_applications.append(_get_application_id(app, applications))
-            return await self._async_create_entry(
+                tracked_applications.append(
+                    _get_application_id(app, applications))
+            return await self.async_create_entry(
                 tracked_applications=tracked_applications
             )
 
@@ -212,7 +228,8 @@ class OptionsFlow(config_entries.OptionsFlow):
                 vol.Optional("tracked_applications",
                              default=default_tracked_applications): selector.SelectSelector(
                     selector.SelectSelectorConfig(
-                        options=_convert_applications(self.family_safety.accounts[0].applications),
+                        options=_convert_applications(
+                            self.family_safety.accounts[0].applications),
                         custom_value=False,
                         multiple=True)
                 )
@@ -231,8 +248,9 @@ class OptionsFlow(config_entries.OptionsFlow):
                     tracked_user_ids.append(
                         _get_account_id(user, self.family_safety.accounts)
                     )
-            return await self._async_create_entry(
-                accounts=tracked_user_ids
+            return await self.async_create_entry(
+                accounts=tracked_user_ids,
+                experimental=user_input.get(CONF_KEY_EXPR, CONF_EXPR_DEFAULT)
             )
 
         default_tracked_accounts = []
@@ -242,7 +260,8 @@ class OptionsFlow(config_entries.OptionsFlow):
         for account in tracked_accounts:
             with contextlib.suppress(IndexError):
                 acc = self.family_safety.get_account(account)
-                default_tracked_accounts.append(f"{acc.first_name} {acc.surname}")
+                default_tracked_accounts.append(
+                    f"{acc.first_name} {acc.surname}")
 
         return self.async_show_form(
             step_id="accounts",
@@ -251,11 +270,13 @@ class OptionsFlow(config_entries.OptionsFlow):
                     vol.Optional("accounts",
                                  default=default_tracked_accounts): selector.SelectSelector(
                                      selector.SelectSelectorConfig(
-                                         options=_convert_accounts(self.family_safety.accounts),
+                                         options=_convert_accounts(
+                                             self.family_safety.accounts),
                                          custom_value=False,
                                          multiple=True
                                      )
-                                 )
+                    ),
+                    vol.Optional(CONF_KEY_EXPR, default=CONF_EXPR_DEFAULT): selector.BooleanSelector()
                 }
             )
         )
@@ -272,6 +293,7 @@ class OptionsFlow(config_entries.OptionsFlow):
             step_id="init",
             menu_options=["auth", "applications", "accounts"]
         )
+
 
 class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""

@@ -13,11 +13,12 @@ from homeassistant.exceptions import (
     HomeAssistantError
 )
 
-from .const import DOMAIN, AGG_ERROR
+from .const import DOMAIN, AGG_ERROR, CONF_EXPR_DEFAULT, CONF_KEY_EXPR
 from .coordinator import FamilySafetyCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR, Platform.SWITCH]
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Create ConfigEntry."""
@@ -25,8 +26,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _LOGGER.debug("Got request to setup entry.")
     try:
         familysafety = await FamilySafety.create(
-            token=entry.options.get("refresh_token", entry.data["refresh_token"]),
-            use_refresh_token=True
+            token=entry.options.get(
+                "refresh_token", entry.options.get("refresh_token", entry.data.get("refresh_token"))),
+            use_refresh_token=True,
+            experimental=entry.options.get(CONF_KEY_EXPR, CONF_EXPR_DEFAULT)
         )
         _LOGGER.debug("Login successful, setting up coordinator.")
         hass.data[DOMAIN][entry.entry_id] = FamilySafetyCoordinator(
@@ -53,8 +56,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     entry.async_on_unload(entry.add_update_listener(update_listener))
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-
     return True
+
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
@@ -64,6 +67,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
+
 
 class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""

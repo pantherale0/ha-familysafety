@@ -35,7 +35,8 @@
             "accounts": {
                 "description": "Allows you to collect all accounts (default) or optionally provide a list of accounts to pull entities for",
                 "data": {
-                    "accounts": "Accounts"
+                    "accounts": "Accounts",
+                    "experimental": "Enable potentially unstable changes"
                 }
             },
             "init": {
@@ -66,6 +67,30 @@
                 "name": {
                     "name": "Application name",
                     "description": "The name of the application to block (you can find this in the screen time sensor)."
+                }
+            }
+        },
+        "deny_request": {
+            "name": "Deny request",
+            "description": "Deny a pending request.",
+            "fields": {
+                "request_id": {
+                    "name": "Request ID",
+                    "description": "The ID of the request to deny, found as an attribute under the pending requests sensor (key 'id')."
+                }
+            }
+        },
+        "approve_request": {
+            "name": "Approve request",
+            "description": "Approve a pending request.",
+            "fields": {
+                "request_id": {
+                    "name": "Request ID",
+                    "description": "The ID of the request to approve, found as an attribute under the pending requests sensor (key 'id')."
+                },
+                "extension_time": {
+                    "name": "Extension Time",
+                    "description": "The number of TBC to grant as an extension"
                 }
             }
         }

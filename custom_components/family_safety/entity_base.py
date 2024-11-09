@@ -11,6 +11,7 @@ from pyfamilysafety.enum import OverrideTarget, OverrideType
 import homeassistant.helpers.device_registry as dr
 from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.exceptions import ServiceValidationError
 
 from .const import DOMAIN
 from .coordinator import FamilySafetyCoordinator
@@ -59,6 +60,29 @@ class ManagedAccountEntity(CoordinatorEntity, Entity):
     async def async_unblock_application(self, name: str):
         """Blocks a application with a given app name."""
         await [a for a in self._account.applications if a.name == name][0].unblock_app()
+
+    async def async_approve_request(self, request_id: str, extension_time: int):
+        """Approve a pending request."""
+        try:
+            await self.coordinator.api.approve_pending_request(
+                request_id=request_id,
+                extension_time=extension_time
+            )
+        except ValueError:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="invalid_request_id"
+            )
+
+    async def async_deny_request(self, request_id: str):
+        """Deny a pending request."""
+        try:
+            await self.coordinator.api.deny_pending_request(request_id=request_id)
+        except ValueError:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="invalid_request_id"
+            )
 
 
 class ApplicationEntity(ManagedAccountEntity):

@@ -4,7 +4,7 @@ from collections.abc import Mapping, Callable
 from dataclasses import dataclass
 from datetime import datetime
 import logging
-from typing import Generic, Any
+from typing import Any
 
 import voluptuous as vol
 
@@ -21,7 +21,7 @@ from homeassistant.helpers.entity_platform import (
 
 from .coordinator import FamilySafetyCoordinator
 
-from .const import DOMAIN
+from .const import DOMAIN, CONF_KEY_EXPR, CONF_EXPR_DEFAULT
 
 from .entity_base import ManagedAccountEntity
 
@@ -31,6 +31,7 @@ _LOGGER = logging.getLogger(__name__)
 @dataclass(frozen=True, kw_only=True)
 class FamilySafetySensorEntityDescription(SensorEntityDescription):
     """Describes family_safety sensor entity."""
+
     value_fn: Callable[[ManagedAccountEntity], str | int | datetime]
     name_fn: Callable[[ManagedAccountEntity], str]
     native_unit_of_measurement_fn: Callable[[ManagedAccountEntity], str]
@@ -43,7 +44,10 @@ GEN_SENSORS: dict[str, FamilySafetySensorEntityDescription] = {
         device_class=SensorDeviceClass.MONETARY,
         name_fn=lambda data: f"{data._account.first_name} Available Balance",
         native_unit_of_measurement_fn=lambda data: data._account.account_currency,
-    ),
+    )
+}
+
+EXPR_SENSORS: dict = {
     "pending_requests": FamilySafetySensorEntityDescription(
         key="pending_requests",
         value_fn=lambda data: len(
@@ -91,13 +95,30 @@ async def async_setup_entry(
                     account_id=account.user_id
                 ))
             entities.extend(
-                [ScreentimeSensor(coordinator=hass.data[DOMAIN]
-                                  [config_entry.entry_id], idx=None, account_id=account.user_id, description=desc) for desc in TIME_SENSORS.values()]
+                [ScreentimeSensor(
+                    coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                    idx=None,
+                    account_id=account.user_id,
+                    description=desc
+                ) for desc in TIME_SENSORS.values()]
             )
             entities.extend(
-                [GenericSensor(coordinator=hass.data[DOMAIN]
-                               [config_entry.entry_id], idx=None, account_id=account.user_id, description=desc) for desc in GEN_SENSORS.values()]
+                [GenericSensor(
+                    coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                    idx=None,
+                    account_id=account.user_id,
+                    description=desc
+                ) for desc in GEN_SENSORS.values()]
             )
+            if config_entry.options.get(CONF_KEY_EXPR, CONF_EXPR_DEFAULT):
+                entities.extend(
+                    [GenericSensor(
+                        coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                        idx=None,
+                        account_id=account.user_id,
+                        description=desc
+                    ) for desc in EXPR_SENSORS.values()]
+                )
 
     async_add_entities(entities, True)
     # register services
@@ -112,13 +133,29 @@ async def async_setup_entry(
         schema={vol.Required("name"): str},
         func="async_unblock_application",
     )
+    if config_entry.options.get(CONF_KEY_EXPR, CONF_EXPR_DEFAULT):
+        platform.async_register_entity_service(
+            name="approve_request",
+            schema={
+                vol.Required("request_id"): str,
+                vol.Required("extension_time"): int
+            },
+            func="async_approve_request"
+        )
+        platform.async_register_entity_service(
+            name="deny_request",
+            schema={
+                vol.Required("request_id"): str
+            },
+            func="async_deny_request"
+        )
 
 
 class GenericSensor(ManagedAccountEntity, SensorEntity):
-    """Generic Sensor."""
+    """Use a Basic Sensor."""
 
     def __init__(self, coordinator: FamilySafetyCoordinator, description: FamilySafetySensorEntityDescription, idx, account_id) -> None:
-        """Generic Sensor."""
+        """Use a Basic Sensor."""
         super().__init__(coordinator, idx, account_id, description.key)
         self.entity_description = description
 
