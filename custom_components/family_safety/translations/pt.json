@@ -1,0 +1,98 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Se precisar de ajuda com a configuração, consulte aqui: https://github.com/pantherale0/ha-familysafety - Clique neste link [Login Microsoft](https://login.live.com/oauth20_authorize.srf?cobrandid=b5d15d4b-695a-4cd5-93c6-13f551b310df&client_id=000000000004893A&response_type=code&redirect_uri=https%3A%2F%2Flogin.live.com%2Foauth20_desktop.srf&response_mode=query&scope=service%3A%3Afamilymobile.microsoft.com%3A%3AMBI_SSL&lw=1&fl=easi2&login_hint=) para obter o URL de resposta OAuth.",
+        "data": {
+          "refresh_token": "Token de atualização",
+          "response_url": "URL de resposta OAuth",
+          "update_interval": "Intervalo de atualização"
+        }
+      }
+    },
+    "error": {
+      "auth": "Token inválido fornecido.",
+      "missing_input": "Entrada inválida, requer um dos seguintes: refresh_token ou response_url.",
+      "connection": "Não foi possível ligar ao servidor.",
+      "unknown": "Ocorreu um erro desconhecido."
+    }
+  },
+  "options": {
+    "step": {
+      "applications": {
+        "description": "Criar ou eliminar entidades específicas de aplicações",
+        "data": {
+          "tracked_applications": "Aplicações"
+        }
+      },
+      "auth": {
+        "description": "Atualizar a autenticação do Microsoft Family Safety",
+        "data": {
+          "update_interval": "Intervalo de atualização (segundos)",
+          "refresh_token": "Token de atualização"
+        }
+      },
+      "accounts": {
+        "description": "Permite recolher todas as contas (padrão) ou fornecer opcionalmente uma lista de contas para obter entidades",
+        "data": {
+          "accounts": "Contas",
+          "experimental": "Ativar alterações potencialmente instáveis"
+        }
+      },
+      "init": {
+        "description": "Atualizar a configuração do Microsoft Family Safety",
+        "menu_options": {
+          "applications": "Configurar entidades de aplicações",
+          "auth": "Configurar autenticação",
+          "accounts": "Configurar contas recolhidas"
+        }
+      }
+    }
+  },
+  "services": {
+    "block_app": {
+      "name": "Bloquear aplicação",
+      "description": "Bloquear uma aplicação de ser executada para a conta Microsoft indicada.",
+      "fields": {
+        "name": {
+          "name": "Nome da aplicação",
+          "description": "O nome da aplicação a bloquear (pode encontrá-lo no sensor de tempo de ecrã)."
+        }
+      }
+    },
+    "unblock_app": {
+      "name": "Desbloquear aplicação",
+      "description": "Permitir que uma aplicação seja executada para a conta Microsoft indicada.",
+      "fields": {
+        "name": {
+          "name": "Nome da aplicação",
+          "description": "O nome da aplicação a desbloquear (pode encontrá-lo no sensor de tempo de ecrã)."
+        }
+      }
+    },
+    "deny_request": {
+      "name": "Recusar pedido",
+      "description": "Recusar um pedido pendente.",
+      "fields": {
+        "request_id": {
+          "name": "ID do pedido",
+          "description": "O ID do pedido a recusar, encontrado como atributo no sensor de pedidos pendentes (chave 'id')."
+        }
+      }
+    },
+    "approve_request": {
+      "name": "Aprovar pedido",
+      "description": "Aprovar um pedido pendente.",
+      "fields": {
+        "request_id": {
+          "name": "ID do pedido",
+          "description": "O ID do pedido a aprovar, encontrado como atributo no sensor de pedidos pendentes (chave 'id')."
+        },
+        "extension_time": {
+          "name": "Tempo de extensão",
+          "description": "O número de TBC a conceder como extensão"
+        }
+      }
+    }
+  }
+}
