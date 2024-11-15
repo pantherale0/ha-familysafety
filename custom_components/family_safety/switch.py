@@ -42,15 +42,15 @@ async def async_setup_entry(
                         platform=platform,
                     )
                 )
-            # for app in config_entry.options.get("tracked_applications", []):
-            #     entities.append(
-            #         ApplicationBlockSwitch(
-            #             coordinator=hass.data[DOMAIN][config_entry.entry_id],
-            #             idx=None,
-            #             account_id=account.user_id,
-            #             app_id=app,
-            #         )
-            #     )
+            for app in config_entry.options.get("tracked_applications", []):
+                entities.append(
+                    ApplicationBlockSwitch(
+                        coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                        idx=None,
+                        account_id=account.user_id,
+                        app_id=app,
+                    )
+                )
 
     async_add_entities(entities, True)
 
