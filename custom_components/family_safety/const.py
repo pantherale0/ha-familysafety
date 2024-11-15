@@ -11,7 +11,6 @@ CONF_KEY_EXPR = "experimental"
 CONF_EXPR_DEFAULT = False
 
 DEFAULT_OVERRIDE_ENTITIES = [
-    OverrideTarget.MOBILE,
     OverrideTarget.WINDOWS,
     OverrideTarget.XBOX
 ]
