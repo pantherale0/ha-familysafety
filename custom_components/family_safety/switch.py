@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .coordinator import FamilySafetyCoordinator
 
-from .const import DOMAIN, DEFAULT_OVERRIDE_ENTITIES
+from .const import DEFAULT_OVERRIDE_ENTITIES
 from .config_entry import FamilySafetyConfigEntry
 from .entity_base import PlatformOverrideEntity, ApplicationEntity
 

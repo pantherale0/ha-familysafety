@@ -1,4 +1,4 @@
-"""Define FamilySafety config entry"""
+"""Define FamilySafety config entry."""
 
 from homeassistant import config_entries
 

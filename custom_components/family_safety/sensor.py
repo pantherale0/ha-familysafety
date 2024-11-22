@@ -20,7 +20,7 @@ from homeassistant.helpers.entity_platform import (
 
 from .coordinator import FamilySafetyCoordinator
 
-from .const import DOMAIN, CONF_KEY_EXPR, CONF_EXPR_DEFAULT
+from .const import CONF_KEY_EXPR, CONF_EXPR_DEFAULT
 from .config_entry import FamilySafetyConfigEntry
 
 from .entity_base import ManagedAccountEntity
