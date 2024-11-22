@@ -14,7 +14,6 @@ DEFAULT_OVERRIDE_ENTITIES = [
     OverrideTarget.WINDOWS,
     OverrideTarget.XBOX
 ]
-AGG_TITLE = "Aggregator error occured. "
-AGG_HELP = "This is an upstream issue with Microsoft and is usually temporary. "
-AGG_FUTURE = "Try reloading the integration in 15 minutes."
-AGG_ERROR = f"{AGG_TITLE}{AGG_HELP}{AGG_FUTURE}"
+AGG_ERROR = ("Aggregator error occured. "
+             "This is an upstream issue with Microsoft and is usually temporary. "
+             "Try reloading the integration in 15 minutes.")

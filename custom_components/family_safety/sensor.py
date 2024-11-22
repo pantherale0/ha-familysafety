@@ -12,7 +12,6 @@ from pyfamilysafety import Account
 from pyfamilysafety.application import Application
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription, SensorDeviceClass
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import (
     AddEntitiesCallback,
@@ -22,6 +21,7 @@ from homeassistant.helpers.entity_platform import (
 from .coordinator import FamilySafetyCoordinator
 
 from .const import DOMAIN, CONF_KEY_EXPR, CONF_EXPR_DEFAULT
+from .config_entry import FamilySafetyConfigEntry
 
 from .entity_base import ManagedAccountEntity
 
@@ -71,11 +71,11 @@ TIME_SENSORS: dict[str, FamilySafetySensorEntityDescription] = {
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    config_entry: ConfigEntry,
+    config_entry: FamilySafetyConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Family Safety sensors."""
-    accounts: list[Account] = hass.data[DOMAIN][config_entry.entry_id].api.accounts
+    accounts: list[Account] = config_entry.runtime_data.api.accounts
     entities = []
     for account in accounts:
         if (account.user_id in config_entry.options.get("accounts", [])) or (
@@ -83,7 +83,7 @@ async def async_setup_entry(
         ):
             for app in config_entry.options.get("tracked_applications", []):
                 entities.append(ScreentimeSensor(
-                    coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                    coordinator=config_entry.runtime_data,
                     description=FamilySafetySensorEntityDescription(
                         key=app,
                         device_class=SensorDeviceClass.DURATION,
@@ -96,7 +96,7 @@ async def async_setup_entry(
                 ))
             entities.extend(
                 [ScreentimeSensor(
-                    coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                    coordinator=config_entry.runtime_data,
                     idx=None,
                     account_id=account.user_id,
                     description=desc
@@ -104,7 +104,7 @@ async def async_setup_entry(
             )
             entities.extend(
                 [GenericSensor(
-                    coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                    coordinator=config_entry.runtime_data,
                     idx=None,
                     account_id=account.user_id,
                     description=desc
@@ -113,7 +113,7 @@ async def async_setup_entry(
             if config_entry.options.get(CONF_KEY_EXPR, CONF_EXPR_DEFAULT):
                 entities.extend(
                     [GenericSensor(
-                        coordinator=hass.data[DOMAIN][config_entry.entry_id],
+                        coordinator=config_entry.runtime_data,
                         idx=None,
                         account_id=account.user_id,
                         description=desc

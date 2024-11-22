@@ -15,12 +15,13 @@ from homeassistant.exceptions import (
 
 from .const import DOMAIN, AGG_ERROR, CONF_EXPR_DEFAULT, CONF_KEY_EXPR
 from .coordinator import FamilySafetyCoordinator
+from .config_entry import FamilySafetyConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR, Platform.SWITCH]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: FamilySafetyConfigEntry) -> bool:
     """Create ConfigEntry."""
     hass.data.setdefault(DOMAIN, {})
     _LOGGER.debug("Got request to setup entry.")
@@ -32,7 +33,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             experimental=entry.options.get(CONF_KEY_EXPR, CONF_EXPR_DEFAULT)
         )
         _LOGGER.debug("Login successful, setting up coordinator.")
-        hass.data[DOMAIN][entry.entry_id] = FamilySafetyCoordinator(
+        entry.runtime_data = FamilySafetyCoordinator(
             hass,
             familysafety,
             entry.options.get("update_interval", entry.data["update_interval"]))
