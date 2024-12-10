@@ -42,11 +42,9 @@ If you would like to try, enable experimental features in the options flow (afte
 
 ## Installation
 
-1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
-1. If you do not have a `custom_components` directory (folder) there, you need to create it.
-1. In the `custom_components` directory (folder) create a new folder called `family_safety`.
-1. Download _all_ the files from the `custom_components/family_safety/` directory (folder) in this repository.
-1. Place the files you downloaded in the new directory (folder) you created.
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=pantherale0&repository=ha-familysafety)
+
+1. Install integration from HACS
 1. Restart Home Assistant
 1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Microsoft Family Safety"
 
