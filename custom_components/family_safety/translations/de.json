@@ -1,0 +1,98 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Wenn Sie Hilfe bei der Konfiguration benötigen, sehen Sie hier nach: https://github.com/pantherale0/ha-familysafety - Klicken Sie auf diesen Link [Microsoft Login](https://login.live.com/oauth20_authorize.srf?cobrandid=b5d15d4b-695a-4cd5-93c6-13f551b310df&client_id=000000000004893A&response_type=code&redirect_uri=https%3A%2F%2Flogin.live.com%2Foauth20_desktop.srf&response_mode=query&scope=service%3A%3Afamilymobile.microsoft.com%3A%3AMBI_SSL&lw=1&fl=easi2&login_hint=), um die OAuth-Antwort-URL abzurufen.",
+        "data": {
+          "refresh_token": "Aktualisierungstoken",
+          "response_url": "OAuth-Antwort-URL",
+          "update_interval": "Aktualisierungsintervall"
+        }
+      }
+    },
+    "error": {
+      "auth": "Ungültiges Token angegeben.",
+      "missing_input": "Ungültige Eingabe, es wird entweder ein Aktualisierungstoken oder eine Antwort-URL benötigt.",
+      "connection": "Verbindung zum Server konnte nicht hergestellt werden.",
+      "unknown": "Ein unbekannter Fehler ist aufgetreten."
+    }
+  },
+  "options": {
+    "step": {
+      "applications": {
+        "description": "Erstellen oder löschen Sie anwendungsspezifische Entitäten.",
+        "data": {
+          "tracked_applications": "Anwendungen"
+        }
+      },
+      "auth": {
+        "description": "Aktualisieren Sie die Microsoft Family Safety-Authentifizierung.",
+        "data": {
+          "update_interval": "Aktualisierungsintervall (Sekunden)",
+          "refresh_token": "Aktualisierungstoken"
+        }
+      },
+      "accounts": {
+        "description": "Ermöglicht das Sammeln aller Konten (Standard) oder optional das Bereitstellen einer Liste von Konten, für die Entitäten abgerufen werden sollen.",
+        "data": {
+          "accounts": "Konten",
+          "experimental": "Potentiell instabile Änderungen aktivieren"
+        }
+      },
+      "init": {
+        "description": "Aktualisieren Sie die Microsoft Family Safety-Konfiguration.",
+        "menu_options": {
+          "applications": "Konfigurieren Sie Anwendungsentitäten.",
+          "auth": "Konfigurieren Sie die Authentifizierungskonfiguration.",
+          "accounts": "Konfigurieren Sie gesammelte Konten."
+        }
+      }
+    }
+  },
+  "services": {
+    "block_app": {
+      "name": "Anwendung blockieren",
+      "description": "Blockieren Sie eine Anwendung für das angegebene Microsoft-Konto.",
+      "fields": {
+        "name": {
+          "name": "Anwendungsname",
+          "description": "Der Name der Anwendung, die blockiert werden soll (zu finden im Bildschirmzeit-Sensor)."
+        }
+      }
+    },
+    "unblock_app": {
+      "name": "Anwendung entsperren",
+      "description": "Erlauben Sie einer Anwendung, für das angegebene Microsoft-Konto zu laufen.",
+      "fields": {
+        "name": {
+          "name": "Anwendungsname",
+          "description": "Der Name der Anwendung, die entsperrt werden soll (zu finden im Bildschirmzeit-Sensor)."
+        }
+      }
+    },
+    "deny_request": {
+      "name": "Anfrage ablehnen",
+      "description": "Lehnen Sie eine ausstehende Anfrage ab.",
+      "fields": {
+        "request_id": {
+          "name": "Anfrage-ID",
+          "description": "Die ID der abzulehnenden Anfrage, zu finden als Attribut im Sensor für ausstehende Anfragen (Schlüssel 'id')."
+        }
+      }
+    },
+    "approve_request": {
+      "name": "Anfrage genehmigen",
+      "description": "Genehmigen Sie eine ausstehende Anfrage.",
+      "fields": {
+        "request_id": {
+          "name": "Anfrage-ID",
+          "description": "Die ID der zu genehmigenden Anfrage, zu finden als Attribut im Sensor für ausstehende Anfragen (Schlüssel 'id')."
+        },
+        "extension_time": {
+          "name": "Verlängerungszeit",
+          "description": "Die Anzahl der TBC, die als Verlängerung gewährt wird."
+        }
+      }
+    }
+  }
+}
